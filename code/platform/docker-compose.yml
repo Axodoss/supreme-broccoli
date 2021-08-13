@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+
+  # ========= Message Broker ==========
+  message-broker:
+    image: 'rabbitmq:3-management'
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq-storage:/data/rabitmq'
+    depends_on:
+      - monitor
+  # ===================================
+
+  # ========= Static Website ==========
+  static-web:
+    image: 'httpd:2.4'
+    ports:
+      - '80:80'
+    volumes:
+      - './static/:/usr/local/apache2/htdocs/'
+    depends_on:
+      - monitor
+  # ===================================
+
+  # ============ File Share ===========
+  samba:
+    image: dperson/samba
+    environment:
+      TZ: 'EST5EDT'
+    networks:
+      - default
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+    read_only: false
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    volumes:
+      - /mnt:/mnt:z
+      - /mnt2:/mnt2:z
+    command: '-s "Mount;/mnt" -s "WDE Volume;/mnt2;yes;no;no;wde" -u "wde;wdepasswd" -p'
+    depends_on:
+      - monitor
+  # ===================================
+
+  # =========== Monitoring ============
+  monitor:
+    image: 'grafana/grafana:6.4.3'
+    #environment:
+    #  - GF_INSTALL_PLUGINS=
+    ports:
+      - '3000:3000'
+    volumes:
+      - 'grafana-storage:/var/lib/grafana'
+  # ===================================
+
+volumes:
+  rabbitmq-storage:
+  grafana-storage:
+
+networks:
+  default:
