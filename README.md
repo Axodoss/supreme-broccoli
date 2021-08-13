@@ -15,18 +15,48 @@ Workload Distribution Engine
                                       +--------------------------------+
 ```
 
+## Queues
+__Task__ - _text_ 
+```json
+{
+  "worker": "dll file",
+  "id": 32,
+  "type": "blah",
+  "content": {
+  }
+}
+```
+__Status__ - _text_ 
+```json
+{
+}
+```
+
 ## Client-Work Interface
 ```c
+struct FileSystem
+{
+    // load/save files
+};
+
+struct MessageSystem
+{
+    // messages
+};
 
 struct Task
 {
-
+    int id;
+    char type[32];
+    char content[8192]; // image content?
 };
 
 struct Context
 {
-	// File System
-	// Message System
+	FileSystem fileSystem;
+    MessageSystem messageSystem;
+
+    // GetWorkerId
 };
 
 bool ClientInit(Context*);     // returns true on success
