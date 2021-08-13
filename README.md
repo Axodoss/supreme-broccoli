@@ -19,16 +19,17 @@ Workload Distribution Engine
 __Task__ - _text_ 
 ```json
 {
-  "worker": "dll file",
-  "id": 32,
-  "type": "blah",
-  "content": {
-  }
+  "workerName": "dll file",
+  "TaskId": 32,
+  "contentType": "name",
+  "contentLength": 100,
+  "content": ""
 }
 ```
 __Status__ - _text_ 
 ```json
 {
+    "workerId"
 }
 ```
 
@@ -46,9 +47,10 @@ struct MessageSystem
 
 struct Task
 {
-    int id;
-    char type[32];
-    char content[8192]; // image content?
+    int TaskId;
+    char contentType[32];
+    int contentLength;
+    char *content;
 };
 
 struct Context
